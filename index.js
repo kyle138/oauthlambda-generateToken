@@ -12,5 +12,5 @@ var oauth2Client = new OAuth2(
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event,null,2)); //DEBUG
   var code = event.code;
-  callback(null, JSON.stringify(code,null,2));  //DEBUG
+  callback(null, code);  //DEBUG
 };
