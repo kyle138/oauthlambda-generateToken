@@ -12,5 +12,37 @@ var oauth2Client = new OAuth2(
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event,null,2)); //DEBUG
   var code = event.code;
-  callback(null, code);  //DEBUG
+  var idToken_email = {};
+  var email = null;
+  console.log("Code: "+code); //DEBUG
+  oauth2Client.getToken(code, function(err, tokens) {
+    if (err) {
+      console.log("Error getToken: "+err);
+      callback(err, null);
+    } else {
+      console.log("Success getToken!"); //DEBUG
+      idToken_email = tokens;
+      // Now tokens contains an access_token and an optional refresh_token. Save them.
+      oauth2Client.setCredentials(tokens);
+      // Get email address of user attempting to login.
+      plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, response) {
+        if(err) {
+          console.log("Error plus.people.get"+err);
+          callback(err,null);
+        } else {
+          // people.get returns an array of emails, we want the one with type=='account'
+          for(var i=0; i<response.emails.length; i++) {
+            if (response.emails[i].type == 'account') {
+              email = response.emails[i].value;
+              break;
+            }
+          }
+          console.log("user email: " + email); //DEBUG
+          idToken_email.email = email;
+          console.log("idToken_email: "+JSON.stringify(idToken_email,null,2));
+          callback(null,idToken_email);
+        }
+      }); // END plus.people.get()
+    }
+  }); // END oauth2Client.getToken()
 };
