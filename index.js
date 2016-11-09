@@ -39,11 +39,12 @@ exports.handler = (event, context, callback) => {
           }
           console.log("user email: " + email); //DEBUG
           if(email.indexOf('@hartenergy.com') > -1) {
+            tokens.admitted=1;  //The logged account is admitted
             console.log("@hartenergy.com tokens: "+JSON.stringify(tokens,null,2));
-            callback(null,tokens);
+            callback(null, tokens);
           } else {
             console.log("Non @hartenergy.com email address");
-            callback("Access denied. Please sign in with @hartenergy.com account",null);
+            callback(null, {"admitted": 0});
           }
         }
       }); // END plus.people.get()
