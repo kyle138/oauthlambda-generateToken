@@ -44,7 +44,11 @@ exports.handler = (event, context, callback) => {
             callback(null, tokens);
           } else {
             console.log("Non @hartenergy.com email address");
-            callback(null, {"admitted": 0});
+            var res = {
+              "admitted": 0,
+              "errorMessage": "Access denied. Please log out and back in using your @hartenergy.com account."
+            };
+            callback(null, res);
           }
         }
       }); // END plus.people.get()
