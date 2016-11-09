@@ -1,6 +1,7 @@
 'use strict';
 
 var google = require("googleapis");
+var plus = google.plus('v1');
 var OAuth2 = google.auth.OAuth2;
 
 var oauth2Client = new OAuth2(
