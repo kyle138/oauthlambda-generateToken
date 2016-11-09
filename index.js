@@ -22,8 +22,7 @@ exports.handler = (event, context, callback) => {
       callback(err, null);
     } else {
       console.log("Success getToken!"); //DEBUG
-      idToken_email = tokens;
-      // Now tokens contains an access_token and an optional refresh_token. Save them.
+      // Now token contains an access_token and an optional refresh_token. Save them.
       oauth2Client.setCredentials(tokens);
       // Get email address of user attempting to login.
       plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, response) {
@@ -39,9 +38,13 @@ exports.handler = (event, context, callback) => {
             }
           }
           console.log("user email: " + email); //DEBUG
-          idToken_email.email = email;
-          console.log("idToken_email: "+JSON.stringify(idToken_email,null,2));
-          callback(null,idToken_email);
+          if(email.indexOf('@hartenergy.com') > -1) {
+            console.log("@hartenergy.com tokens: "+JSON.stringify(tokens,null,2));
+            callback(null,tokens);
+          } else {
+            console.log("Non @hartenergy.com email address");
+            callback("Access denied. Please sign in with @hartenergy.com account",null);
+          }
         }
       }); // END plus.people.get()
     }
