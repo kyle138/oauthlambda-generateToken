@@ -40,6 +40,7 @@ exports.handler = (event, context, callback) => {
           console.log("user email: " + email); //DEBUG
           if(email.indexOf('@hartenergy.com') > -1) {
             tokens.admitted=1;  //The logged account is admitted
+            tokens.email=email;
             console.log("@hartenergy.com tokens: "+JSON.stringify(tokens,null,2));
             callback(null, tokens);
           } else {
