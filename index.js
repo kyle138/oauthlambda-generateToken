@@ -4,18 +4,17 @@ var google = require("googleapis");
 var plus = google.plus('v1');
 var OAuth2 = google.auth.OAuth2;
 
+// Initialize oauth2Client using Lambda environment variables
 var oauth2Client = new OAuth2(
-  "662293723339-9pqrciusdj9qu7qsfnsph3ek9m696maa.apps.googleusercontent.com", // Client ID
-  "uqzoMKLTnr96BNEm6Y8lsjHL", // Client Secret
-  "http://hedmmysqltest.s3-website-us-east-1.amazonaws.com/gapicb/" // Redirect URL
+  process.clientId, // Client ID
+  process.clientSecret, // Client Secret
+  process.redirectUrl // Redirect URL
 );
 
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event,null,2)); //DEBUG
   var code = event.code;
-  var idToken_email = {};
   var email = null;
-  console.log("Code: "+code); //DEBUG
   oauth2Client.getToken(code, function(err, tokens) {
     if (err) {
       console.log("Error getToken: "+err);
@@ -39,7 +38,7 @@ exports.handler = (event, context, callback) => {
           }
           console.log("user email: " + email); //DEBUG
           if(email.indexOf('@hartenergy.com') > -1) {
-            tokens.admitted=1;  //The logged account is admitted
+            tokens.admitted=1;  //The logged in account is admitted
             tokens.email=email;
             console.log("@hartenergy.com tokens: "+JSON.stringify(tokens,null,2));
             callback(null, tokens);
