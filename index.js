@@ -6,9 +6,9 @@ var OAuth2 = google.auth.OAuth2;
 
 // Initialize oauth2Client using Lambda environment variables
 var oauth2Client = new OAuth2(
-  process.clientId, // Client ID
-  process.clientSecret, // Client Secret
-  process.redirectUrl // Redirect URL
+  process.env.clientId, // Client ID
+  process.env.clientSecret, // Client Secret
+  process.env.redirectUrl // Redirect URL
 );
 
 exports.handler = (event, context, callback) => {
