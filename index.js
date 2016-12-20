@@ -15,9 +15,8 @@ exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event,null,2)); //DEBUG
   if(!event.code) {
     callback("Required field missing: code");
-  } else {
-    var code = event.code;
   }
+  var code = event.code;
   var email = null;
   oauth2Client.getToken(code, function(err, tokens) {
     if (err) {
