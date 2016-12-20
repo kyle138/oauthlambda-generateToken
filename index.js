@@ -18,6 +18,7 @@ exports.handler = (event, context, callback) => {
   }
   var code = event.code;
   var email = null;
+  // Swap google code for google token
   oauth2Client.getToken(code, function(err, tokens) {
     if (err) {
       console.log("Error getToken: "+err);
@@ -32,18 +33,18 @@ exports.handler = (event, context, callback) => {
           console.log("Error plus.people.get"+err);
           callback(err,null);
         } else {
-          // people.get returns an array of emails, we want the one with type=='account'
+          // plus.people.get returns an array of emails, we want the one with type=='account'
           for(var i=0; i<response.emails.length; i++) {
             if (response.emails[i].type == 'account') {
               email = response.emails[i].value;
               break;
             }
           }
-          console.log("user email: " + email); //DEBUG
+          // In this case we only want to return tokens for users logged in with @hartenergy.com google accounts
           if(email.indexOf('@hartenergy.com') > -1) {
             tokens.admitted=1;  //The logged in account is admitted
             tokens.email=email;
-            console.log("@hartenergy.com tokens: "+JSON.stringify(tokens,null,2));
+            console.log("Login admitted: "+email);
             callback(null, tokens);
           } else {
             console.log("Non @hartenergy.com email address");
@@ -52,9 +53,9 @@ exports.handler = (event, context, callback) => {
               "errorMessage": "Access denied. Please log out and back in using your @hartenergy.com account."
             };
             callback(null, res);
-          }
+          } // END if(@hartenergy.com)
         }
       }); // END plus.people.get()
     }
   }); // END oauth2Client.getToken()
-};
+};  // END exports.handler
