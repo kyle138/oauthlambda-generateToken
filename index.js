@@ -13,7 +13,11 @@ var oauth2Client = new OAuth2(
 
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event,null,2)); //DEBUG
-  var code = event.code;
+  if(!event.code) {
+    callback("Required field missing: code");
+  } else {
+    var code = event.code;
+  }
   var email = null;
   oauth2Client.getToken(code, function(err, tokens) {
     if (err) {
