@@ -100,7 +100,7 @@ exports.handler = (event, context, callback) => {
               }); // End accountInDomain
             }
           }); // End getPrimaryAccount
-        }
+        } // Sweet callbackhell, aren't we don't closing {s yet?
       }); // END plus.people.get()
     }
   }); // END oauth2Client.getToken()
