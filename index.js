@@ -85,8 +85,8 @@ exports.handler = (event, context, callback) => {
                 } else {
                   if(res) {
                     tokens.admitted=1;  //The logged in account is admitted
-                    tokens.email=email;
-                    console.log("Login admitted: "+email);
+                    tokens.email=account;
+                    console.log("Login admitted: "+account);
                     callback(null, tokens);
                   } else {
                     console.log("Non @hartenergy.com email address");
