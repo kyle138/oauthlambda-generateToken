@@ -51,7 +51,7 @@ exports.handler = (event, context, callback) => {
               console.log("Error oauth2.userinfo.get: "+err);
               callback(err,null);
             } else {
-              console.log("oauth2.userinfo.get.response: "+response);
+              console.log("oauth2.userinfo.get.response: "+ JSON.stringify(response,null,2));
               getPrimaryAccount(response.emails, function(err, account){
                 if(err) {
                   console.log("Error getAccount: "+err);
