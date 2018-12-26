@@ -1,7 +1,7 @@
 'use strict';
 
 var google = require("googleapis");
-var plus = google.plus('v1');
+var oauth2 = google.oauth2('v2');
 var OAuth2 = google.auth.OAuth2;
 
 exports.handler = (event, context, callback) => {
@@ -42,11 +42,13 @@ exports.handler = (event, context, callback) => {
           // Now token contains an access_token and an optional refresh_token. Save them.
           oauth2Client.setCredentials(tokens);
           // Get email addresses of user attempting to login.
-          plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, response) {
+          oauth2.userinfo.get({ auth: oauth2Client }, function(err, response) {
+//          plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, response) {
             if(err) {
-              console.log("Error plus.people.get"+err);
+              console.log("Error oauth2.userinfo.get: "+err);
               callback(err,null);
             } else {
+              console.log("oauth2.userinfo.get.response: "+response);
               getPrimaryAccount(response.emails, function(err, account){
                 if(err) {
                   console.log("Error getAccount: "+err);
