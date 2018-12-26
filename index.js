@@ -1,8 +1,10 @@
 'use strict';
 
-var google = require("googleapis");
-var oauth2 = google.oauth2_v2;
-var OAuth2 = google.auth.OAuth2;
+//var google = require("googleapis");
+const {google} = require('googleapis');
+//var oauth2 = google.oauth2_v2;
+const oauth2 = google.oauth2('v2');
+//var OAuth2 = google.auth.OAuth2;
 
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event,null,2)); //DEBUG
@@ -26,7 +28,7 @@ exports.handler = (event, context, callback) => {
 
     if(redirectUrl) {
       // Initialize oauth2Client
-      var oauth2Client = new OAuth2(
+      var oauth2Client = new oauth2(
         process.env.clientId, // Client ID
         process.env.clientSecret, // Client Secret
         redirectUrl // Redirect URL decided above
