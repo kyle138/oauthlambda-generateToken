@@ -1,7 +1,7 @@
 'use strict';
 
 var google = require("googleapis");
-//var oauth2 = google.oauth2('v2');
+var oauth2 = google.oauth2_v2;
 var OAuth2 = google.auth.OAuth2;
 
 exports.handler = (event, context, callback) => {
