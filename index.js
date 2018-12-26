@@ -52,7 +52,7 @@ exports.handler = (event, context, callback) => {
               callback(err,null);
             } else {
               console.log('oauth2.userinfo.get.response: ', response); // DEBUG
-              console.log('oauth2.userinfo.get.response.email: ', response.email);  // DEBUG: 
+              console.log('oauth2.userinfo.get.response.email: ', response.data.email);  // DEBUG: 
               getPrimaryAccount(response.emails, function(err, account){
                 if(err) {
                   console.log("Error getAccount: "+err);
