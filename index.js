@@ -1,10 +1,7 @@
 'use strict';
 
-//var google = require("googleapis");
 const {google} = require('googleapis');
-//var oauth2 = google.oauth2_v2;
 const oauth2 = google.oauth2('v2');
-//var OAuth2 = google.auth.OAuth2;
 
 exports.handler = (event, context, callback) => {
   console.log('Received event:', JSON.stringify(event,null,2)); //DEBUG
@@ -29,7 +26,6 @@ exports.handler = (event, context, callback) => {
     if(redirectUrl) {
       // Initialize oauth2Client
       const oauth2Client = new google.auth.OAuth2(
-//      var oauth2Client = new oauth2(
         process.env.clientId, // Client ID
         process.env.clientSecret, // Client Secret
         redirectUrl // Redirect URL decided above
@@ -46,44 +42,36 @@ exports.handler = (event, context, callback) => {
           oauth2Client.setCredentials(tokens);
           // Get email addresses of user attempting to login.
           oauth2.userinfo.get({ auth: oauth2Client }, function(err, response) {
-//          plus.people.get({ userId: 'me', auth: oauth2Client }, function(err, response) {
             if(err) {
               console.log("Error oauth2.userinfo.get: "+err);
               callback(err,null);
             } else {
               console.log('oauth2.userinfo.get.response: ', response); // DEBUG
-              console.log('oauth2.userinfo.get.response.email: ', response.data.email);  // DEBUG: 
-              getPrimaryAccount(response.emails, function(err, account){
+              console.log('oauth2.userinfo.get.response.email: ', response.data.email);  // DEBUG:
+              // In this case we only want to return tokens for users logged in with @hartenergy.com google accounts
+              accountInDomain(response.data.email, '@hartenergy.com', function(err, res) {
                 if(err) {
-                  console.log("Error getAccount: "+err);
+                  console.log("Error accountInDomain: "+err);
                   callback(err,null);
                 } else {
-                  // In this case we only want to return tokens for users logged in with @hartenergy.com google accounts
-                  accountInDomain(account, '@hartenergy.com', function(err, res) {
-                    if(err) {
-                      console.log("Error accountInDomain: "+err);
-                      callback(err,null);
-                    } else {
-                      if(res) {
-                        tokens.admitted=1;  //The logged in account is admitted
-                        tokens.email=account;
-                        console.log("Login admitted: "+account);
-                        callback(null, tokens);
-                      } else {
-                        console.log("Non @hartenergy.com email address");
-                        var ret = {
-                          "admitted": 0,
-                          "errorMessage": "Access denied. Please log out of your Google account in this browser and log back in using your @hartenergy.com account."
-                        };
-                        callback(null, ret);
-                      } // END if(@hartenergy.com)
-                    }
-                  }); // End accountInDomain
+                  if(res) {
+                    tokens.admitted=1;  //The logged in account is admitted
+                    tokens.email=response.data.email;
+                    console.log("Login admitted: "+response.data.email);
+                    callback(null, tokens);
+                  } else {
+                    console.log("Non @hartenergy.com email address");
+                    var ret = {
+                      "admitted": 0,
+                      "errorMessage": "Access denied. Please log out of your Google account in this browser and log back in using your @hartenergy.com account."
+                    };
+                    callback(null, ret);
+                  } // END if(@hartenergy.com)
                 }
-              }); // End getPrimaryAccount
-            } // Sweet callbackhell, aren't we done closing {}s yet?
-          }); // END plus.people.get()
-        }
+              }); // End accountInDomain
+            }
+          }); // END oauth2.userinfo.get()
+        } // Sweet callbackhell, aren't we done closing {}s yet?
       }); // END oauth2Client.getToken()
     } else {  // if(redirectUrl)
       console.error("Origin: "+event.origin+" is not permitted.");
@@ -95,6 +83,7 @@ exports.handler = (event, context, callback) => {
   }
 };  // END exports.handler
 
+/*
 // Get the primary account 'user@domain.com' of the Oauth2 authenticated account
 function getPrimaryAccount(emails, cb) {
   if(!emails) {
@@ -117,6 +106,7 @@ function getPrimaryAccount(emails, cb) {
     } // End if ret
   } // End if !emails
 }; // End getPrimaryAccount()
+*/
 
 // Check if account is within the specified domain
 function accountInDomain(account, domain, cb) {
