@@ -46,8 +46,6 @@ exports.handler = (event, context, callback) => {
               console.log("Error oauth2.userinfo.get: "+err);
               callback(err,null);
             } else {
-              console.log('oauth2.userinfo.get.response: ', response); // DEBUG
-              console.log('oauth2.userinfo.get.response.email: ', response.data.email);  // DEBUG:
               // In this case we only want to return tokens for users logged in with @hartenergy.com google accounts
               accountInDomain(response.data.email, '@hartenergy.com', function(err, res) {
                 if(err) {
@@ -82,31 +80,6 @@ exports.handler = (event, context, callback) => {
     callback("Internal error",null);
   }
 };  // END exports.handler
-
-/*
-// Get the primary account 'user@domain.com' of the Oauth2 authenticated account
-function getPrimaryAccount(emails, cb) {
-  if(!emails) {
-    if(typeof cb === 'function' && cb("Error: emails is a required argument", null));
-    return false;
-  } else {
-    var ret = false;
-    // plus.people.get returns an array of emails, we want the one with type=='account'
-    for(var i=0; i<emails.length; i++) {
-      if (emails[i].type == 'account') {
-        ret = emails[i].value;
-      }
-    }; // End for
-    if(ret) {
-      if(typeof cb === 'function' && cb(null, ret));
-      return ret;
-    } else {
-      if(typeof cb === 'function' && cb("Error: No primary account found", null));
-      return ret;
-    } // End if ret
-  } // End if !emails
-}; // End getPrimaryAccount()
-*/
 
 // Check if account is within the specified domain
 function accountInDomain(account, domain, cb) {
